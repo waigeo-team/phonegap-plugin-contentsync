@@ -980,23 +980,25 @@ public class Sync extends CordovaPlugin {
         }
     }
 
-    private void copyFolder(File src, File dest) throws IOException{
-        if(src.isDirectory()) {
-            if(!dest.exists()){
-                dest.mkdir();
+    private void copyFolder(File src, File dest) throws IOException {
+        if (!src.getName().equals(".bak")) {
+            if (src.isDirectory()) {
+                if (!dest.exists()){
+                    dest.mkdir();
+                }
+
+                //list all the directory contents
+                String files[] = src.list();
+
+                for (String file : files) {
+                    //recursive copy
+                    copyFolder(new File(src, file), new File(dest, file));
+                }
+
+            } else {
+                //if file, then copy it
+                copyFile(new FileInputStream(src), new FileOutputStream(dest));
             }
-
-            //list all the directory contents
-            String files[] = src.list();
-
-            for (String file : files) {
-                //recursive copy
-                copyFolder(new File(src, file), new File(dest, file));
-            }
-
-        } else {
-            //if file, then copy it
-            copyFile(new FileInputStream(src), new FileOutputStream(dest));
         }
     }
 
